@@ -26,654 +26,926 @@ public:
     friend ostream &operator<<(ostream &out, const Date &d);
 };
 
-Date::Date() : day(1), month(1), year(2024) {}
-
+Date::Date() : day(1), month(1), year(2025) {}
 Date::Date(int d, int m, int y) : day(d), month(m), year(y) {}
-
 Date::Date(const Date &d) : day(d.day), month(d.month), year(d.year) {}
-
 Date::~Date() {}
 
 int Date::getDay() const { return day; }
 int Date::getMonth() const { return month; }
 int Date::getYear() const { return year; }
-
 void Date::setDate(int d, int m, int y)
 {
     day = d;
     month = m;
     year = y;
 }
-
 void Date::display() const { cout << day << "/" << month << "/" << year; }
 
 bool Date::operator==(const Date &d) const
 {
     return (day == d.day && month == d.month && year == d.year);
 }
-
 ostream &operator<<(ostream &out, const Date &d)
 {
     out << d.day << "/" << d.month << "/" << d.year;
     return out;
 }
 
-class Room
+class MenuItem
 {
 private:
-    int roomNumber;
-    string roomType;
-    float rentPerMonth;
-    bool isOccupied;
+    int itemId;
+    char *itemName;
+    string category;
+    float price;
+    bool isAvailable;
 
-    static int totalRooms;
-
-public:
-    Room();
-    Room(int num, string type, float rent);
-    Room(const Room &r);
-    ~Room();
-
-    Room &operator=(const Room &r);
-
-    int getRoomNumber() const;
-    string getRoomType() const;
-    float getRent() const;
-    bool getIsOccupied() const;
-
-    void setOccupied(bool status);
-    void setRoomNumber(int n);
-    void setRoomType(string t);
-    void setRent(float r);
-
-    static int getTotalRooms();
-
-    bool operator==(const Room &r) const;
-
-    friend ostream &operator<<(ostream &out, const Room &r);
-
-    void display() const;
-};
-
-int Room::totalRooms = 0;
-
-Room::Room() : roomNumber(0), roomType("Single"), rentPerMonth(0.0f), isOccupied(false)
-{
-    totalRooms++;
-}
-
-Room::Room(int num, string type, float rent)
-    : roomNumber(num), roomType(type), rentPerMonth(rent), isOccupied(false)
-{
-    totalRooms++;
-}
-
-Room::Room(const Room &r)
-    : roomNumber(r.roomNumber), roomType(r.roomType),
-      rentPerMonth(r.rentPerMonth), isOccupied(r.isOccupied)
-{
-    totalRooms++;
-}
-
-Room::~Room()
-{
-    totalRooms--;
-}
-
-Room &Room::operator=(const Room &r)
-{
-    if (this != &r)
-    {
-        roomNumber = r.roomNumber;
-        roomType = r.roomType;
-        rentPerMonth = r.rentPerMonth;
-        isOccupied = r.isOccupied;
-    }
-    return *this;
-}
-
-int Room::getRoomNumber() const { return roomNumber; }
-string Room::getRoomType() const { return roomType; }
-float Room::getRent() const { return rentPerMonth; }
-bool Room::getIsOccupied() const { return isOccupied; }
-
-void Room::setOccupied(bool status) { isOccupied = status; }
-void Room::setRoomNumber(int n) { roomNumber = n; }
-void Room::setRoomType(string t) { roomType = t; }
-void Room::setRent(float r) { rentPerMonth = r; }
-
-int Room::getTotalRooms() { return totalRooms; }
-
-bool Room::operator==(const Room &r) const
-{
-    return roomNumber == r.roomNumber;
-}
-
-ostream &operator<<(ostream &out, const Room &r)
-{
-    out << "Room #" << r.roomNumber
-        << " [" << r.roomType << "]"
-        << "  Rent: PKR " << r.rentPerMonth << "/month"
-        << "  Status: " << (r.isOccupied ? "Occupied" : "Available");
-    return out;
-}
-
-void Room::display() const { cout << *this << endl; }
-
-class Student
-{
-private:
-    int studentId;
-    char *name;
-    string cnic;
-    string contact;
-    Room room;
-    Date joinDate;
-    float totalFeesPaid;
-
-    static int studentCount;
+    static int totalItems;
 
 public:
-    Student();
-    Student(int id, const char *n, string c, string con, Room r, Date d);
-    Student(const Student &s);
-    ~Student();
+    MenuItem();
+    MenuItem(int id, const char *name, string cat, float p);
+    MenuItem(const MenuItem &m);
+    ~MenuItem();
 
-    Student &operator=(const Student &s);
+    MenuItem &operator=(const MenuItem &m);
 
     int getId() const;
     string getName() const;
-    string getCnic() const;
-    string getContact() const;
-    Room getRoom() const;
-    Date getJoinDate() const;
-    float getTotalFeesPaid() const;
+    string getCategory() const;
+    float getPrice() const;
+    bool getAvailable() const;
+    void setPrice(float p);
+    void setAvailable(bool a);
 
-    void setContact(string c);
-    void setRoom(const Room &r);
+    static int getTotalItems();
 
-    Student &payFees(float amount);
-    Student &updateContact(string c);
-
-    static int getStudentCount();
-
-    bool operator==(const Student &s) const;
-
-    friend ostream &operator<<(ostream &out, const Student &s);
+    bool operator==(const MenuItem &m) const;
+    friend ostream &operator<<(ostream &out, const MenuItem &m);
 
     void display() const;
 };
 
-int Student::studentCount = 0;
+int MenuItem::totalItems = 0;
 
-Student::Student()
-    : studentId(0), name(nullptr), cnic(""), contact(""),
-      room(), joinDate(), totalFeesPaid(0.0f)
+MenuItem::MenuItem()
+    : itemId(0), itemName(nullptr), category(""), price(0.0f), isAvailable(true)
 {
-    name = new char[1];
-    name[0] = '\0';
-    studentCount++;
+    itemName = new char[1];
+    itemName[0] = '\0';
+    totalItems++;
 }
 
-Student::Student(int id, const char *n, string c, string con, Room r, Date d)
-    : studentId(id), cnic(c), contact(con),
-      room(r), joinDate(d), totalFeesPaid(0.0f)
+MenuItem::MenuItem(int id, const char *name, string cat, float p)
+    : itemId(id), category(cat), price(p), isAvailable(true)
 {
-
-    name = new char[strlen(n) + 1];
-    strcpy(name, n);
-    studentCount++;
+    itemName = new char[strlen(name) + 1];
+    strcpy(itemName, name);
+    totalItems++;
 }
 
-Student::Student(const Student &s)
-    : studentId(s.studentId), cnic(s.cnic), contact(s.contact),
-      room(s.room), joinDate(s.joinDate), totalFeesPaid(s.totalFeesPaid)
+MenuItem::MenuItem(const MenuItem &m)
+    : itemId(m.itemId), category(m.category),
+      price(m.price), isAvailable(m.isAvailable)
 {
-    name = new char[strlen(s.name) + 1];
-    strcpy(name, s.name);
-    studentCount++;
+    itemName = new char[strlen(m.itemName) + 1];
+    strcpy(itemName, m.itemName);
+    totalItems++;
 }
 
-Student::~Student()
+MenuItem::~MenuItem()
 {
-    delete[] name;
-    studentCount--;
+    delete[] itemName;
+    totalItems--;
 }
 
-Student &Student::operator=(const Student &s)
+MenuItem &MenuItem::operator=(const MenuItem &m)
 {
-    if (this != &s)
+    if (this != &m)
     {
-        delete[] name;
-        name = new char[strlen(s.name) + 1];
-        strcpy(name, s.name);
-        studentId = s.studentId;
-        cnic = s.cnic;
-        contact = s.contact;
-        room = s.room;
-        joinDate = s.joinDate;
-        totalFeesPaid = s.totalFeesPaid;
+        delete[] itemName;
+        itemName = new char[strlen(m.itemName) + 1];
+        strcpy(itemName, m.itemName);
+        itemId = m.itemId;
+        category = m.category;
+        price = m.price;
+        isAvailable = m.isAvailable;
     }
     return *this;
 }
 
-int Student::getId() const { return studentId; }
-string Student::getName() const { return string(name); }
-string Student::getCnic() const { return cnic; }
-string Student::getContact() const { return contact; }
-Room Student::getRoom() const { return room; }
-Date Student::getJoinDate() const { return joinDate; }
-float Student::getTotalFeesPaid() const { return totalFeesPaid; }
+int MenuItem::getId() const { return itemId; }
+string MenuItem::getName() const { return string(itemName); }
+string MenuItem::getCategory() const { return category; }
+float MenuItem::getPrice() const { return price; }
+bool MenuItem::getAvailable() const { return isAvailable; }
+void MenuItem::setPrice(float p) { price = p; }
+void MenuItem::setAvailable(bool a) { isAvailable = a; }
 
-void Student::setContact(string c) { contact = c; }
-void Student::setRoom(const Room &r) { room = r; }
+int MenuItem::getTotalItems() { return totalItems; }
 
-Student &Student::payFees(float amount)
+bool MenuItem::operator==(const MenuItem &m) const { return itemId == m.itemId; }
+
+ostream &operator<<(ostream &out, const MenuItem &m)
 {
-    totalFeesPaid += amount;
+    out << "[" << m.itemId << "] " << m.itemName
+        << "  (" << m.category << ")"
+        << "  PKR " << m.price
+        << (m.isAvailable ? "  [Available]" : "  [Unavailable]");
+    return out;
+}
+void MenuItem::display() const { cout << *this << endl; }
+
+class Customer
+{
+private:
+    int customerId;
+    char *name;
+    string contact;
+    string address;
+    float totalSpent;
+
+    static int customerCount;
+
+public:
+    Customer();
+    Customer(int id, const char *n, string con, string addr);
+    Customer(const Customer &c);
+    ~Customer();
+
+    Customer &operator=(const Customer &c);
+
+    int getId() const;
+    string getName() const;
+    string getContact() const;
+    string getAddress() const;
+    float getTotalSpent() const;
+    void setContact(string c);
+    void setAddress(string a);
+
+    Customer &addSpending(float amount);
+    Customer &updateAddress(string a);
+
+    static int getCustomerCount();
+
+    bool operator==(const Customer &c) const;
+    friend ostream &operator<<(ostream &out, const Customer &c);
+
+    void display() const;
+};
+
+int Customer::customerCount = 0;
+
+Customer::Customer()
+    : customerId(0), name(nullptr), contact(""), address(""), totalSpent(0.0f)
+{
+    name = new char[1];
+    name[0] = '\0';
+    customerCount++;
+}
+
+Customer::Customer(int id, const char *n, string con, string addr)
+    : customerId(id), contact(con), address(addr), totalSpent(0.0f)
+{
+    name = new char[strlen(n) + 1];
+    strcpy(name, n);
+    customerCount++;
+}
+
+Customer::Customer(const Customer &c)
+    : customerId(c.customerId), contact(c.contact),
+      address(c.address), totalSpent(c.totalSpent)
+{
+    name = new char[strlen(c.name) + 1];
+    strcpy(name, c.name);
+    customerCount++;
+}
+
+Customer::~Customer()
+{
+    delete[] name;
+    customerCount--;
+}
+
+Customer &Customer::operator=(const Customer &c)
+{
+    if (this != &c)
+    {
+        delete[] name;
+        name = new char[strlen(c.name) + 1];
+        strcpy(name, c.name);
+        customerId = c.customerId;
+        contact = c.contact;
+        address = c.address;
+        totalSpent = c.totalSpent;
+    }
     return *this;
 }
-Student &Student::updateContact(string c)
+
+int Customer::getId() const { return customerId; }
+string Customer::getName() const { return string(name); }
+string Customer::getContact() const { return contact; }
+string Customer::getAddress() const { return address; }
+float Customer::getTotalSpent() const { return totalSpent; }
+void Customer::setContact(string c) { contact = c; }
+void Customer::setAddress(string a) { address = a; }
+
+Customer &Customer::addSpending(float amount)
 {
-    contact = c;
+    totalSpent += amount;
+    return *this;
+}
+Customer &Customer::updateAddress(string a)
+{
+    address = a;
     return *this;
 }
 
-int Student::getStudentCount() { return studentCount; }
+int Customer::getCustomerCount() { return customerCount; }
 
-bool Student::operator==(const Student &s) const
+bool Customer::operator==(const Customer &c) const { return customerId == c.customerId; }
+
+ostream &operator<<(ostream &out, const Customer &c)
 {
-    return studentId == s.studentId;
+    out << "ID: " << c.customerId
+        << " | Name: " << c.name
+        << " | Contact: " << c.contact
+        << " | Address: " << c.address
+        << " | Total Spent: PKR " << c.totalSpent;
+    return out;
+}
+void Customer::display() const
+{
+    cout << "\n-------- Customer Details --------" << endl;
+    cout << *this << endl;
+    cout << "----------------------------------" << endl;
 }
 
-ostream &operator<<(ostream &out, const Student &s)
+class Order
 {
-    out << "ID: " << s.studentId
-        << " | Name: " << s.name
-        << " | CNIC: " << s.cnic
-        << " | Contact: " << s.contact
-        << " | Room: " << s.room.getRoomNumber()
-        << " | Joined: " << s.joinDate
-        << " | Fees Paid: PKR " << s.totalFeesPaid;
+private:
+    int orderId;
+    Customer customer;
+    MenuItem *items;
+    int itemCount;
+    int maxItems;
+    Date orderDate;
+    string status;
+    float totalAmount;
+
+    static int orderCount;
+
+public:
+    Order();
+    Order(int id, Customer cust, Date d, int maxI = 10);
+    Order(const Order &o);
+    ~Order();
+
+    Order &operator=(const Order &o);
+
+    int getOrderId() const;
+    Customer getCustomer() const;
+    Date getOrderDate() const;
+    string getStatus() const;
+    float getTotalAmount() const;
+    int getItemCount() const;
+
+    Order &addItem(const MenuItem &item);
+    Order &updateStatus(string s);
+    Order &applyDiscount(float percent);
+
+    static int getOrderCount();
+
+    bool operator==(const Order &o) const;
+    friend ostream &operator<<(ostream &out, const Order &o);
+
+    void display() const;
+};
+
+int Order::orderCount = 0;
+
+Order::Order()
+    : orderId(0), customer(), orderDate(),
+      itemCount(0), maxItems(10), status("Pending"), totalAmount(0.0f)
+{
+    items = new MenuItem[maxItems];
+    orderCount++;
+}
+
+Order::Order(int id, Customer cust, Date d, int maxI)
+    : orderId(id), customer(cust), orderDate(d),
+      itemCount(0), maxItems(maxI), status("Pending"), totalAmount(0.0f)
+{
+    items = new MenuItem[maxItems];
+    orderCount++;
+}
+
+Order::Order(const Order &o)
+    : orderId(o.orderId), customer(o.customer), orderDate(o.orderDate),
+      itemCount(o.itemCount), maxItems(o.maxItems),
+      status(o.status), totalAmount(o.totalAmount)
+{
+    items = new MenuItem[maxItems];
+    for (int i = 0; i < itemCount; i++)
+        items[i] = o.items[i];
+    orderCount++;
+}
+
+Order::~Order()
+{
+    delete[] items;
+    orderCount--;
+}
+
+Order &Order::operator=(const Order &o)
+{
+    if (this != &o)
+    {
+        delete[] items;
+        maxItems = o.maxItems;
+        itemCount = o.itemCount;
+        items = new MenuItem[maxItems];
+        for (int i = 0; i < itemCount; i++)
+            items[i] = o.items[i];
+        orderId = o.orderId;
+        customer = o.customer;
+        orderDate = o.orderDate;
+        status = o.status;
+        totalAmount = o.totalAmount;
+    }
+    return *this;
+}
+
+int Order::getOrderId() const { return orderId; }
+Customer Order::getCustomer() const { return customer; }
+Date Order::getOrderDate() const { return orderDate; }
+string Order::getStatus() const { return status; }
+float Order::getTotalAmount() const { return totalAmount; }
+int Order::getItemCount() const { return itemCount; }
+
+Order &Order::addItem(const MenuItem &item)
+{
+    if (itemCount >= maxItems)
+    {
+        cout << "[!] Order is full!" << endl;
+        return *this;
+    }
+    items[itemCount] = item;
+    totalAmount += item.getPrice();
+    itemCount++;
+    return *this;
+}
+
+Order &Order::updateStatus(string s)
+{
+    status = s;
+    return *this;
+}
+
+Order &Order::applyDiscount(float percent)
+{
+    totalAmount -= totalAmount * (percent / 100.0f);
+    return *this;
+}
+
+int Order::getOrderCount() { return orderCount; }
+
+bool Order::operator==(const Order &o) const { return orderId == o.orderId; }
+
+ostream &operator<<(ostream &out, const Order &o)
+{
+    out << "Order #" << o.orderId
+        << " | Customer: " << o.customer.getName()
+        << " | Date: " << o.orderDate
+        << " | Items: " << o.itemCount
+        << " | Total: PKR " << o.totalAmount
+        << " | Status: " << o.status;
     return out;
 }
 
-void Student::display() const
+void Order::display() const
 {
-    cout << "\n-------- Student Details --------" << endl;
+    cout << "\n========== ORDER DETAILS ==========" << endl;
     cout << *this << endl;
-    cout << "Room Info: " << room << endl;
-    cout << "---------------------------------" << endl;
+    cout << "  Customer Address: " << customer.getAddress() << endl;
+    cout << "  Items Ordered:" << endl;
+    for (int i = 0; i < itemCount; i++)
+    {
+        cout << "    " << items[i] << endl;
+    }
+    cout << "====================================" << endl;
 }
 
-class Hostel
+class FoodDeliverySystem
 {
 private:
-    string hostelName;
-    Student **students;
-    Room *rooms;
-    int maxStudents;
-    int maxRooms;
-    int currentStudents;
-    int currentRooms;
+    string systemName;
+    Customer **customers;
+    Order **orders;
+    MenuItem *menu;
+    int maxCustomers;
+    int maxOrders;
+    int maxMenuItems;
+    int currentCustomers;
+    int currentOrders;
+    int currentMenuItems;
 
-    static int hostelCount;
+    static int systemCount;
     const string dataFile;
 
-    Room *findRoom(int roomNum);
-    Student *findStudent(int id);
+    Customer *findCustomer(int id);
+    Order *findOrder(int id);
+    MenuItem *findMenuItem(int id);
 
 public:
-    Hostel(string name, int maxS, int maxR);
-    ~Hostel();
+    FoodDeliverySystem(string name, int maxC, int maxO, int maxM);
+    ~FoodDeliverySystem();
 
-    void initializeRooms();
+    void initializeMenu();
 
-    void addRoom(int num, string type, float rent);
-    void displayAllRooms() const;
-    void displayAvailableRooms() const;
+    void addMenuItem(int id, const char *name, string cat, float price);
+    void displayMenu() const;
+    void displayAvailableMenu() const;
 
-    void addStudent(int id, const char *name, string cnic,
-                    string contact, int roomNum, Date joinDate);
-    void removeStudent(int id);
-    void searchStudent(int id) const;
-    void displayAllStudents() const;
+    void addCustomer(int id, const char *name, string contact, string address);
+    void removeCustomer(int id);
+    void searchCustomer(int id) const;
+    void displayAllCustomers() const;
 
-    void collectFees(int id, float amount);
+    void placeOrder(int orderId, int customerId, int day, int month, int year);
+    void addItemToOrder(int orderId, int menuItemId);
+    void updateOrderStatus(int orderId, string status);
+    void applyDiscountToOrder(int orderId, float percent);
+    void viewOrder(int orderId) const;
+    void displayAllOrders() const;
+    void displayOrdersByCustomer(int customerId) const;
 
     void displayStats() const;
-    string getHostelName() const;
+    string getSystemName() const;
 
     void saveToFile() const;
     void loadFromFile();
 
-    static int getHostelCount();
+    static int getSystemCount();
 
-    friend ostream &operator<<(ostream &out, const Hostel &h);
+    friend ostream &operator<<(ostream &out, const FoodDeliverySystem &f);
 };
 
-int Hostel::hostelCount = 0;
+int FoodDeliverySystem::systemCount = 0;
 
-Hostel::Hostel(string name, int maxS, int maxR)
-    : hostelName(name), maxStudents(maxS), maxRooms(maxR),
-      currentStudents(0), currentRooms(0), dataFile("hostel_data.txt")
+FoodDeliverySystem::FoodDeliverySystem(string name, int maxC, int maxO, int maxM)
+    : systemName(name), maxCustomers(maxC), maxOrders(maxO),
+      maxMenuItems(maxM), currentCustomers(0), currentOrders(0),
+      currentMenuItems(0), dataFile("orders_data.txt")
 {
 
-    students = new Student *[maxStudents];
-    rooms = new Room[maxRooms];
+    customers = new Customer *[maxCustomers];
+    orders = new Order *[maxOrders];
+    menu = new MenuItem[maxMenuItems];
 
-    for (int i = 0; i < maxStudents; i++)
-        students[i] = nullptr;
-    hostelCount++;
-    initializeRooms();
+    for (int i = 0; i < maxCustomers; i++)
+        customers[i] = nullptr;
+    for (int i = 0; i < maxOrders; i++)
+        orders[i] = nullptr;
+    systemCount++;
+    initializeMenu();
 }
 
-Hostel::~Hostel()
+FoodDeliverySystem::~FoodDeliverySystem()
 {
-    for (int i = 0; i < currentStudents; i++)
+    for (int i = 0; i < currentCustomers; i++)
+        delete customers[i];
+    for (int i = 0; i < currentOrders; i++)
+        delete orders[i];
+    delete[] customers;
+    delete[] orders;
+    delete[] menu;
+    systemCount--;
+}
+
+void FoodDeliverySystem::initializeMenu()
+{
+    struct
     {
-        delete students[i];
-    }
-    delete[] students;
-    delete[] rooms;
-    hostelCount--;
-}
-
-void Hostel::initializeRooms()
-{
-    string types[] = {"Single", "Double", "Triple"};
-    float rents[] = {5000.0f, 8000.0f, 10000.0f};
-    int limit = (maxRooms < 10) ? maxRooms : 10;
-
+        int id;
+        const char *name;
+        const char *cat;
+        float price;
+    } defaults[] = {
+        {1, "Zinger Burger", "Burger", 350.0f},
+        {2, "Chicken Pizza", "Pizza", 750.0f},
+        {3, "Pepsi 500ml", "Drink", 80.0f},
+        {4, "French Fries", "Snack", 150.0f},
+        {5, "Chicken Shawarma", "Wrap", 220.0f},
+        {6, "Veggie Burger", "Burger", 280.0f},
+        {7, "Garlic Bread", "Snack", 120.0f},
+        {8, "Chocolate Shake", "Drink", 180.0f},
+    };
+    int count = sizeof(defaults) / sizeof(defaults[0]);
+    int limit = (count < maxMenuItems) ? count : maxMenuItems;
     for (int i = 0; i < limit; i++)
     {
-        rooms[currentRooms] = Room(101 + i, types[i % 3], rents[i % 3]);
-        currentRooms++;
+        menu[currentMenuItems] = MenuItem(defaults[i].id, defaults[i].name,
+                                          defaults[i].cat, defaults[i].price);
+        currentMenuItems++;
     }
 }
 
-Room *Hostel::findRoom(int roomNum)
+Customer *FoodDeliverySystem::findCustomer(int id)
 {
-    for (int i = 0; i < currentRooms; i++)
-    {
-        if (rooms[i].getRoomNumber() == roomNum)
-            return &rooms[i];
-    }
+    for (int i = 0; i < currentCustomers; i++)
+        if (customers[i]->getId() == id)
+            return customers[i];
+    return nullptr;
+}
+Order *FoodDeliverySystem::findOrder(int id)
+{
+    for (int i = 0; i < currentOrders; i++)
+        if (orders[i]->getOrderId() == id)
+            return orders[i];
+    return nullptr;
+}
+MenuItem *FoodDeliverySystem::findMenuItem(int id)
+{
+    for (int i = 0; i < currentMenuItems; i++)
+        if (menu[i].getId() == id)
+            return &menu[i];
     return nullptr;
 }
 
-Student *Hostel::findStudent(int id)
+void FoodDeliverySystem::addMenuItem(int id, const char *name, string cat, float price)
 {
-    for (int i = 0; i < currentStudents; i++)
+    if (currentMenuItems >= maxMenuItems)
     {
-        if (students[i]->getId() == id)
-            return students[i];
-    }
-    return nullptr;
-}
-
-void Hostel::addRoom(int num, string type, float rent)
-{
-    if (currentRooms >= maxRooms)
-    {
-        cout << "[!] No space to add more rooms!" << endl;
+        cout << "[!] Menu is full!" << endl;
         return;
     }
-    rooms[currentRooms] = Room(num, type, rent);
-    currentRooms++;
-    cout << "[+] Room added successfully!" << endl;
+    menu[currentMenuItems] = MenuItem(id, name, cat, price);
+    currentMenuItems++;
+    cout << "[+] Menu item added!" << endl;
 }
 
-void Hostel::displayAllRooms() const
+void FoodDeliverySystem::displayMenu() const
 {
-    cout << "\n========== ALL ROOMS ==========" << endl;
-    for (int i = 0; i < currentRooms; i++)
-    {
-        cout << rooms[i] << endl;
-    }
+    cout << "\n============= FULL MENU =============" << endl;
+    for (int i = 0; i < currentMenuItems; i++)
+        cout << menu[i] << endl;
 }
 
-void Hostel::displayAvailableRooms() const
+void FoodDeliverySystem::displayAvailableMenu() const
 {
-    cout << "\n======= AVAILABLE ROOMS =======" << endl;
-    bool found = false;
-    for (int i = 0; i < currentRooms; i++)
-    {
-        if (!rooms[i].getIsOccupied())
-        {
-            cout << rooms[i] << endl;
-            found = true;
-        }
-    }
-    if (!found)
-        cout << "  No available rooms at the moment." << endl;
+    cout << "\n========== AVAILABLE MENU ===========" << endl;
+    for (int i = 0; i < currentMenuItems; i++)
+        if (menu[i].getAvailable())
+            cout << menu[i] << endl;
 }
 
-void Hostel::addStudent(int id, const char *name, string cnic,
-                        string contact, int roomNum, Date joinDate)
+void FoodDeliverySystem::addCustomer(int id, const char *name,
+                                     string contact, string address)
 {
-    if (currentStudents >= maxStudents)
+    if (currentCustomers >= maxCustomers)
     {
-        cout << "[!] Hostel is full!" << endl;
+        cout << "[!] Customer limit reached!" << endl;
         return;
     }
-
-    for (int i = 0; i < currentStudents; i++)
+    for (int i = 0; i < currentCustomers; i++)
     {
-        if (students[i]->getId() == id)
+        if (customers[i]->getId() == id)
         {
-            cout << "[!] Student ID already exists!" << endl;
+            cout << "[!] Customer ID already exists!" << endl;
             return;
         }
     }
-
-    Room *r = findRoom(roomNum);
-    if (r == nullptr)
-    {
-        cout << "[!] Room not found!" << endl;
-        return;
-    }
-    if (r->getIsOccupied())
-    {
-        cout << "[!] Room is already occupied!" << endl;
-        return;
-    }
-
-    r->setOccupied(true);
-
-    students[currentStudents] = new Student(id, name, cnic, contact, *r, joinDate);
-    currentStudents++;
-    cout << "[+] Student registered successfully!" << endl;
+    customers[currentCustomers] = new Customer(id, name, contact, address);
+    currentCustomers++;
+    cout << "[+] Customer registered!" << endl;
     saveToFile();
 }
 
-void Hostel::removeStudent(int id)
+void FoodDeliverySystem::removeCustomer(int id)
 {
-    for (int i = 0; i < currentStudents; i++)
+    for (int i = 0; i < currentCustomers; i++)
     {
-        if (students[i]->getId() == id)
+        if (customers[i]->getId() == id)
         {
-
-            Room *r = findRoom(students[i]->getRoom().getRoomNumber());
-            if (r != nullptr)
-                r->setOccupied(false);
-
-            delete students[i];
-
-            students[i] = students[currentStudents - 1];
-            students[currentStudents - 1] = nullptr;
-            currentStudents--;
-            cout << "[+] Student removed successfully!" << endl;
+            delete customers[i];
+            customers[i] = customers[currentCustomers - 1];
+            customers[currentCustomers - 1] = nullptr;
+            currentCustomers--;
+            cout << "[+] Customer removed!" << endl;
             saveToFile();
             return;
         }
     }
-    cout << "[!] Student not found!" << endl;
+    cout << "[!] Customer not found!" << endl;
 }
 
-void Hostel::searchStudent(int id) const
+void FoodDeliverySystem::searchCustomer(int id) const
 {
-    for (int i = 0; i < currentStudents; i++)
+    for (int i = 0; i < currentCustomers; i++)
     {
-        if (students[i]->getId() == id)
+        if (customers[i]->getId() == id)
         {
-            students[i]->display();
+            customers[i]->display();
             return;
         }
     }
-    cout << "[!] Student not found!" << endl;
+    cout << "[!] Customer not found!" << endl;
 }
 
-void Hostel::displayAllStudents() const
+void FoodDeliverySystem::displayAllCustomers() const
 {
-    if (currentStudents == 0)
+    if (currentCustomers == 0)
     {
-        cout << "  No students registered yet." << endl;
+        cout << "  No customers yet." << endl;
         return;
     }
-    cout << "\n========= ALL STUDENTS =========" << endl;
-    for (int i = 0; i < currentStudents; i++)
-    {
-        students[i]->display();
-    }
+    cout << "\n========== ALL CUSTOMERS ===========" << endl;
+    for (int i = 0; i < currentCustomers; i++)
+        customers[i]->display();
 }
 
-void Hostel::collectFees(int id, float amount)
+void FoodDeliverySystem::placeOrder(int orderId, int customerId,
+                                    int day, int month, int year)
 {
-    Student *s = findStudent(id);
-    if (s == nullptr)
+    if (currentOrders >= maxOrders)
     {
-        cout << "[!] Student not found!" << endl;
+        cout << "[!] Order limit reached!" << endl;
+        return;
+    }
+    for (int i = 0; i < currentOrders; i++)
+    {
+        if (orders[i]->getOrderId() == orderId)
+        {
+            cout << "[!] Order ID exists!" << endl;
+            return;
+        }
+    }
+    Customer *c = findCustomer(customerId);
+    if (c == nullptr)
+    {
+        cout << "[!] Customer not found!" << endl;
         return;
     }
 
-    s->payFees(amount);
-    cout << "[+] PKR " << amount << " collected from " << s->getName() << endl;
-    cout << "    Total paid so far: PKR " << s->getTotalFeesPaid() << endl;
+    Date d(day, month, year);
+    orders[currentOrders] = new Order(orderId, *c, d);
+    currentOrders++;
+    cout << "[+] Order placed! Now add items using option 9." << endl;
     saveToFile();
 }
 
-void Hostel::displayStats() const
+void FoodDeliverySystem::addItemToOrder(int orderId, int menuItemId)
 {
-    cout << "\n======= HOSTEL STATISTICS =======" << endl;
-    cout << *this << endl;
-    cout << "  Room objects alive  : " << Room::getTotalRooms() << endl;
-    cout << "  Student objects alive: " << Student::getStudentCount() << endl;
-    cout << "  Hostel instances     : " << hostelCount << endl;
+    Order *o = findOrder(orderId);
+    MenuItem *m = findMenuItem(menuItemId);
+    if (o == nullptr)
+    {
+        cout << "[!] Order not found!" << endl;
+        return;
+    }
+    if (m == nullptr)
+    {
+        cout << "[!] Menu item not found!" << endl;
+        return;
+    }
+    if (!m->getAvailable())
+    {
+        cout << "[!] Item unavailable!" << endl;
+        return;
+    }
+
+    o->addItem(*m);
+    Customer *c = findCustomer(o->getCustomer().getId());
+    if (c != nullptr)
+        c->addSpending(m->getPrice());
+    cout << "[+] " << m->getName() << " added to Order #" << orderId << endl;
+    saveToFile();
 }
 
-string Hostel::getHostelName() const { return hostelName; }
-int Hostel::getHostelCount() { return hostelCount; }
-
-ostream &operator<<(ostream &out, const Hostel &h)
+void FoodDeliverySystem::updateOrderStatus(int orderId, string status)
 {
-    out << "Hostel : " << h.hostelName
-        << "  |  Students: " << h.currentStudents << "/" << h.maxStudents
-        << "  |  Rooms: " << h.currentRooms << "/" << h.maxRooms;
+    Order *o = findOrder(orderId);
+    if (o == nullptr)
+    {
+        cout << "[!] Order not found!" << endl;
+        return;
+    }
+    o->updateStatus(status);
+    cout << "[+] Order #" << orderId << " status: " << status << endl;
+    saveToFile();
+}
+
+void FoodDeliverySystem::applyDiscountToOrder(int orderId, float percent)
+{
+    Order *o = findOrder(orderId);
+    if (o == nullptr)
+    {
+        cout << "[!] Order not found!" << endl;
+        return;
+    }
+
+    o->applyDiscount(percent).updateStatus("Discounted");
+    cout << "[+] " << percent << "% discount applied to Order #" << orderId << endl;
+    cout << "    New Total: PKR " << o->getTotalAmount() << endl;
+    saveToFile();
+}
+
+void FoodDeliverySystem::viewOrder(int orderId) const
+{
+    for (int i = 0; i < currentOrders; i++)
+    {
+        if (orders[i]->getOrderId() == orderId)
+        {
+            orders[i]->display();
+            return;
+        }
+    }
+    cout << "[!] Order not found!" << endl;
+}
+
+void FoodDeliverySystem::displayAllOrders() const
+{
+    if (currentOrders == 0)
+    {
+        cout << "  No orders yet." << endl;
+        return;
+    }
+    cout << "\n============ ALL ORDERS ============" << endl;
+    for (int i = 0; i < currentOrders; i++)
+        orders[i]->display();
+}
+
+void FoodDeliverySystem::displayOrdersByCustomer(int customerId) const
+{
+    cout << "\n====== ORDERS FOR CUSTOMER #" << customerId << " ======" << endl;
+    bool found = false;
+    for (int i = 0; i < currentOrders; i++)
+    {
+        if (orders[i]->getCustomer().getId() == customerId)
+        {
+            orders[i]->display();
+            found = true;
+        }
+    }
+    if (!found)
+        cout << "  No orders found for this customer." << endl;
+}
+
+void FoodDeliverySystem::displayStats() const
+{
+    cout << "\n======= SYSTEM STATISTICS =======" << endl;
+    cout << *this << endl;
+    cout << "  MenuItem objects : " << MenuItem::getTotalItems() << endl;
+    cout << "  Customer objects : " << Customer::getCustomerCount() << endl;
+    cout << "  Order objects    : " << Order::getOrderCount() << endl;
+    cout << "  System instances : " << systemCount << endl;
+}
+
+string FoodDeliverySystem::getSystemName() const { return systemName; }
+int FoodDeliverySystem::getSystemCount() { return systemCount; }
+
+ostream &operator<<(ostream &out, const FoodDeliverySystem &f)
+{
+    out << "System : " << f.systemName
+        << "  |  Customers: " << f.currentCustomers << "/" << f.maxCustomers
+        << "  |  Orders: " << f.currentOrders << "/" << f.maxOrders
+        << "  |  Menu Items: " << f.currentMenuItems;
     return out;
 }
 
-void Hostel::saveToFile() const
+void FoodDeliverySystem::saveToFile() const
 {
     ofstream file(dataFile);
     if (!file.is_open())
     {
-        cout << "[!] Cannot open file for writing!" << endl;
+        cout << "[!] Cannot open file!" << endl;
         return;
     }
-    file << currentStudents << "\n";
-    for (int i = 0; i < currentStudents; i++)
+
+    file << currentCustomers << "\n";
+    for (int i = 0; i < currentCustomers; i++)
     {
-        file << students[i]->getId() << "\n";
-        file << students[i]->getName() << "\n";
-        file << students[i]->getCnic() << "\n";
-        file << students[i]->getContact() << "\n";
-        file << students[i]->getRoom().getRoomNumber() << "\n";
-        file << students[i]->getJoinDate().getDay() << " "
-             << students[i]->getJoinDate().getMonth() << " "
-             << students[i]->getJoinDate().getYear() << "\n";
-        file << students[i]->getTotalFeesPaid() << "\n";
+        file << customers[i]->getId() << "\n";
+        file << customers[i]->getName() << "\n";
+        file << customers[i]->getContact() << "\n";
+        file << customers[i]->getAddress() << "\n";
+        file << customers[i]->getTotalSpent() << "\n";
+    }
+
+    file << currentOrders << "\n";
+    for (int i = 0; i < currentOrders; i++)
+    {
+        file << orders[i]->getOrderId() << "\n";
+        file << orders[i]->getCustomer().getId() << "\n";
+        file << orders[i]->getOrderDate().getDay() << " "
+             << orders[i]->getOrderDate().getMonth() << " "
+             << orders[i]->getOrderDate().getYear() << "\n";
+        file << orders[i]->getStatus() << "\n";
+        file << orders[i]->getTotalAmount() << "\n";
+        file << orders[i]->getItemCount() << "\n";
     }
     file.close();
     cout << "  [*] Data saved to '" << dataFile << "'" << endl;
 }
 
-void Hostel::loadFromFile()
+void FoodDeliverySystem::loadFromFile()
 {
     ifstream file(dataFile);
     if (!file.is_open())
     {
-        cout << "  [*] No previous data found. Starting fresh." << endl;
+        cout << "  [*] No previous data. Starting fresh." << endl;
         return;
     }
-    int count = 0;
+    int count;
+
     file >> count;
     file.ignore();
-
-    for (int i = 0; i < count && currentStudents < maxStudents; i++)
+    for (int i = 0; i < count && currentCustomers < maxCustomers; i++)
     {
-        int id, roomNum, d, m, y;
-        float fees;
-        string name, cnic, contact;
-
+        int id;
+        float spent;
+        string name, contact, address;
         file >> id;
         file.ignore();
         getline(file, name);
-        getline(file, cnic);
         getline(file, contact);
-        file >> roomNum >> d >> m >> y >> fees;
+        getline(file, address);
+        file >> spent;
         file.ignore();
+        customers[currentCustomers] = new Customer(id, name.c_str(), contact, address);
+        customers[currentCustomers]->addSpending(spent);
+        currentCustomers++;
+    }
 
-        Room *r = findRoom(roomNum);
-        if (r != nullptr)
+    file >> count;
+    file.ignore();
+    for (int i = 0; i < count && currentOrders < maxOrders; i++)
+    {
+        int ordId, custId, d, m, y;
+        float total;
+        string status;
+        int itemCnt;
+        file >> ordId >> custId >> d >> m >> y;
+        file.ignore();
+        getline(file, status);
+        file >> total >> itemCnt;
+        file.ignore();
+        Customer *c = findCustomer(custId);
+        if (c != nullptr)
         {
-            Date joinDate(d, m, y);
-            r->setOccupied(true);
-            students[currentStudents] = new Student(id, name.c_str(),
-                                                    cnic, contact, *r, joinDate);
-            students[currentStudents]->payFees(fees);
-            currentStudents++;
+            Date dt(d, m, y);
+            orders[currentOrders] = new Order(ordId, *c, dt);
+            orders[currentOrders]->updateStatus(status);
+            currentOrders++;
         }
     }
     file.close();
     cout << "  [*] Data loaded from '" << dataFile << "'" << endl;
 }
 
-void displayMenu(const Hostel &h)
+void displayMainMenu(const FoodDeliverySystem &fds)
 {
-    cout << "\n============================================" << endl;
-    cout << "     HOSTEL MANAGEMENT SYSTEM" << endl;
-    cout << "     " << h.getHostelName() << endl;
-    cout << "============================================" << endl;
-    cout << " 1.  Add Student" << endl;
-    cout << " 2.  Remove Student" << endl;
-    cout << " 3.  Search Student" << endl;
-    cout << " 4.  Display All Students" << endl;
-    cout << " 5.  Display All Rooms" << endl;
-    cout << " 6.  Display Available Rooms" << endl;
-    cout << " 7.  Collect Fees" << endl;
-    cout << " 8.  Add Room" << endl;
-    cout << " 9.  Display Statistics" << endl;
-    cout << " 10. Save Data to File" << endl;
+    cout << "\n=============================================" << endl;
+    cout << "       FOOD DELIVERY SYSTEM" << endl;
+    cout << "       " << fds.getSystemName() << endl;
+    cout << "=============================================" << endl;
+    cout << " 1.  Add Customer" << endl;
+    cout << " 2.  Remove Customer" << endl;
+    cout << " 3.  Search Customer" << endl;
+    cout << " 4.  Display All Customers" << endl;
+    cout << " 5.  Display Full Menu" << endl;
+    cout << " 6.  Display Available Menu" << endl;
+    cout << " 7.  Add Menu Item" << endl;
+    cout << " 8.  Place Order" << endl;
+    cout << " 9.  Add Item to Order" << endl;
+    cout << " 10. Update Order Status" << endl;
+    cout << " 11. Apply Discount to Order" << endl;
+    cout << " 12. View Order" << endl;
+    cout << " 13. Display All Orders" << endl;
+    cout << " 14. Orders by Customer" << endl;
+    cout << " 15. Display Statistics" << endl;
+    cout << " 16. Save Data to File" << endl;
     cout << " 0.  Exit" << endl;
-    cout << "============================================" << endl;
+    cout << "=============================================" << endl;
     cout << " Enter your choice: ";
 }
 
 int main()
 {
-    cout << "\n==============================================" << endl;
-    cout << "   Welcome to Hostel Management System (HMS)" << endl;
-    cout << "==============================================" << endl;
+    cout << "\n=================================================" << endl;
+    cout << "   Welcome to Food Delivery System" << endl;
+    cout << "   Maham Shahzadi  |  2025-CS-693" << endl;
+    cout << "=================================================" << endl;
 
-    Hostel *hostel = new Hostel("Green Valley Hostel", 50, 20);
-
-    hostel->loadFromFile();
+    FoodDeliverySystem *fds = new FoodDeliverySystem("QuickBite Express", 100, 200, 50);
+    fds->loadFromFile();
 
     int choice;
     do
     {
-        displayMenu(*hostel);
+        displayMainMenu(*fds);
         cin >> choice;
         cin.ignore();
 
@@ -682,115 +954,163 @@ int main()
 
         case 1:
         {
-
-            int id, roomNum, d, m, y;
+            int id;
             char name[100];
-            string cnic, contact;
-
-            cout << "\n--- Add New Student ---" << endl;
-            cout << "Student ID    : ";
+            string contact, address;
+            cout << "\n--- Register Customer ---" << endl;
+            cout << "Customer ID  : ";
             cin >> id;
             cin.ignore();
-            cout << "Full Name     : ";
+            cout << "Full Name    : ";
             cin.getline(name, 100);
-            cout << "CNIC          : ";
-            getline(cin, cnic);
-            cout << "Contact No.   : ";
+            cout << "Contact No.  : ";
             getline(cin, contact);
-            cout << "Room Number   : ";
-            cin >> roomNum;
-            cout << "Join Date (DD MM YYYY): ";
-            cin >> d >> m >> y;
-
-            Date joinDate(d, m, y);
-            hostel->addStudent(id, name, cnic, contact, roomNum, joinDate);
+            cout << "Address      : ";
+            getline(cin, address);
+            fds->addCustomer(id, name, contact, address);
             break;
         }
 
         case 2:
         {
-
             int id;
-            cout << "Enter Student ID to remove: ";
+            cout << "Enter Customer ID to remove: ";
             cin >> id;
-            hostel->removeStudent(id);
+            fds->removeCustomer(id);
             break;
         }
 
         case 3:
         {
-
             int id;
-            cout << "Enter Student ID to search: ";
+            cout << "Enter Customer ID to search: ";
             cin >> id;
-            hostel->searchStudent(id);
+            fds->searchCustomer(id);
             break;
         }
 
         case 4:
-            hostel->displayAllStudents();
+            fds->displayAllCustomers();
             break;
-
         case 5:
-            hostel->displayAllRooms();
+            fds->displayMenu();
             break;
-
         case 6:
-            hostel->displayAvailableRooms();
+            fds->displayAvailableMenu();
             break;
 
         case 7:
         {
-
             int id;
-            float amount;
-            cout << "Enter Student ID  : ";
+            char name[100];
+            string cat;
+            float price;
+            cout << "\n--- Add Menu Item ---" << endl;
+            cout << "Item ID        : ";
             cin >> id;
-            cout << "Enter Fee Amount  : ";
-            cin >> amount;
-            hostel->collectFees(id, amount);
+            cin.ignore();
+            cout << "Item Name      : ";
+            cin.getline(name, 100);
+            cout << "Category       : ";
+            getline(cin, cat);
+            cout << "Price (PKR)    : ";
+            cin >> price;
+            fds->addMenuItem(id, name, cat, price);
             break;
         }
 
         case 8:
         {
-
-            int num;
-            string type;
-            float rent;
-            cout << "\n--- Add New Room ---" << endl;
-            cout << "Room Number           : ";
-            cin >> num;
-            cin.ignore();
-            cout << "Type (Single/Double/Triple): ";
-            getline(cin, type);
-            cout << "Rent per Month (PKR)  : ";
-            cin >> rent;
-            hostel->addRoom(num, type, rent);
+            int orderId, customerId, d, m, y;
+            cout << "\n--- Place Order ---" << endl;
+            cout << "Order ID      : ";
+            cin >> orderId;
+            cout << "Customer ID   : ";
+            cin >> customerId;
+            cout << "Order Date (DD MM YYYY): ";
+            cin >> d >> m >> y;
+            fds->placeOrder(orderId, customerId, d, m, y);
             break;
         }
 
         case 9:
-            hostel->displayStats();
+        {
+            int orderId, menuItemId;
+            cout << "Order ID     : ";
+            cin >> orderId;
+            cout << "Menu Item ID : ";
+            cin >> menuItemId;
+            fds->addItemToOrder(orderId, menuItemId);
             break;
+        }
 
         case 10:
-            hostel->saveToFile();
+        {
+            int orderId;
+            string status;
+            cout << "Order ID : ";
+            cin >> orderId;
+            cin.ignore();
+            cout << "New Status: ";
+            getline(cin, status);
+            fds->updateOrderStatus(orderId, status);
+            break;
+        }
+
+        case 11:
+        {
+            int orderId;
+            float percent;
+            cout << "Order ID     : ";
+            cin >> orderId;
+            cout << "Discount (%) : ";
+            cin >> percent;
+            fds->applyDiscountToOrder(orderId, percent);
+            break;
+        }
+
+        case 12:
+        {
+            int orderId;
+            cout << "Order ID : ";
+            cin >> orderId;
+            fds->viewOrder(orderId);
+            break;
+        }
+
+        case 13:
+            fds->displayAllOrders();
+            break;
+
+        case 14:
+        {
+            int customerId;
+            cout << "Customer ID : ";
+            cin >> customerId;
+            fds->displayOrdersByCustomer(customerId);
+            break;
+        }
+
+        case 15:
+            fds->displayStats();
+            break;
+        case 16:
+            fds->saveToFile();
             break;
 
         case 0:
             cout << "\nSaving and exiting..." << endl;
-            hostel->saveToFile();
+            fds->saveToFile();
             break;
 
         default:
-            cout << "[!] Invalid choice! Please try again." << endl;
+            cout << "[!] Invalid choice! Try again." << endl;
         }
 
     } while (choice != 0);
 
-    delete hostel;
+    delete fds;
 
-    cout << "\nThank you for using HMS. Goodbye!" << endl;
+    cout << "\nThank you for using QuickBite Express. Goodbye!" << endl;
     return 0;
 }
