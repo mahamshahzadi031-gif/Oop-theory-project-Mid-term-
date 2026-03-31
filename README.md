@@ -1,6 +1,19 @@
-# 🏠 Hostel Management System (HMS)
+# 🍔 Food Delivery System (FDS)
 
-> A single-file C++ console application demonstrating all core Object-Oriented Programming concepts taught in Weeks 1–7, including file persistence, operator overloading, deep copy semantics, dynamic memory management, and more.
+> A single-file C++ console application demonstrating all core Object-Oriented Programming concepts from Weeks 1–7, featuring a complete food ordering pipeline with customers, menu management, order processing, discounts, and file persistence.
+
+---
+
+## 👨‍💻 Author
+
+| Field | Details |
+|-------|---------|
+| **Name** | Maham Shahzadi |
+| **Roll Number** | 2025-CS-693 |
+| **Project** | Food Delivery System |
+| **Language** | C++ |
+| **Paradigm** | Object-Oriented Programming |
+| **Curriculum** | Weeks 1–7 OOP Concepts |
 
 ---
 
@@ -15,18 +28,19 @@
 - [File Structure](#-file-structure)
 - [Diagrams](#-diagrams)
 - [Sample Usage](#-sample-usage)
+- [Key OOP Highlights](#-key-oop-highlights)
 
 ---
 
 ## 🎯 Project Overview
 
-The **Hostel Management System** manages students, rooms, and fee records for a hostel. All data is persisted to a text file (`hostel_data.txt`) and reloaded on startup. The entire project lives in a **single `main.cpp` file** and covers every OOP topic from the course curriculum.
+The **Food Delivery System** simulates a real-world food ordering platform like Foodpanda or Uber Eats. It manages customers, a restaurant menu, and orders. All data is persisted to `orders_data.txt` and reloaded on startup. The entire project is in a **single `main.cpp` file** covering every OOP topic from the course curriculum.
 
 ```
 Language  : C++
 File      : main.cpp  (single file)
-Data file : hostel_data.txt  (auto-created)
-Compiler  : g++ (GCC) — any C++11 or later
+Data file : orders_data.txt  (auto-created)
+Compiler  : g++ (GCC) — C++11 or later
 ```
 
 ---
@@ -35,13 +49,13 @@ Compiler  : g++ (GCC) — any C++11 or later
 
 | Week | Topic | Where in Code |
 |------|-------|---------------|
-| **W1** | Encapsulation, Abstraction, OOP vs structured | All `private` fields in `Date`, `Room`, `Student`, `Hostel` |
-| **W2** | Classes & Objects, default/copy ctor, destructor, `=`, `&`, `public`/`private` | All four classes implement the full set of special members |
-| **W3** | Programmer-defined ctor, overloading, shallow vs deep copy, initializer list | `Student(const Student&)` deep-copies `char* name` via `new`; initializer lists in every constructor |
-| **W4** | Separate declaration & definition, accessors, objects as arg/return, cascaded calls | `getRoom() : Room`, `getJoinDate() : Date`; `payFees().updateContact()` chain |
-| **W5** | Static members, `const` members, object members, `this` pointer | `static int studentCount`, `const string dataFile`, `Room room` inside `Student`, `return *this` |
-| **W6** | Arrow `->` operator, `new` / `delete` for heap objects | `students = new Student*[max]`, `students[i]->getId()`, `delete students[i]` |
-| **W7** | Operator overloading (member & friend), friend restrictions | `operator==`, `operator=`, `operator<<` as `friend` in all classes |
+| **W1** | Encapsulation, Abstraction, OOP vs structured | All `private` fields in `Date`, `MenuItem`, `Customer`, `Order`, `FoodDeliverySystem` |
+| **W2** | Classes & Objects, default/copy ctor, destructor, `public`/`private` | All five classes implement the full set of special member functions |
+| **W3** | Programmer-defined ctor, overloading, shallow vs deep copy, initializer list | `MenuItem`, `Customer`, `Order` all deep-copy `char*` via `new`; initializer lists everywhere |
+| **W4** | Separate declaration & definition, accessors, objects as arg/return, cascaded calls | `getCustomer():Customer`, `getOrderDate():Date`; `o->addItem(x).updateStatus("Preparing")` |
+| **W5** | Static members, `const` members, object members, `this` pointer | `static customerCount`, `static orderCount`, `const dataFile`, `Customer customer` inside `Order`, `return *this` |
+| **W6** | Arrow `->` operator, `new` / `delete` | `customers = new Customer*[max]`, `customers[i]->getId()`, `delete customers[i]` |
+| **W7** | Operator overloading (member & friend) | `operator==`, `operator=`, `operator<<` as `friend` in all classes |
 | **File I/O** | Text file handling | `saveToFile()` with `ofstream`, `loadFromFile()` with `ifstream` |
 
 ---
@@ -49,40 +63,42 @@ Compiler  : g++ (GCC) — any C++11 or later
 ## 🏗 Class Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                        Hostel                        │
-│  - students : Student**  (dynamic array, W6)         │
-│  - rooms    : Room*      (dynamic array, W6)         │
-│  - hostelCount : static  (W5)                        │
-│  - dataFile    : const   (W5)                        │
-│  + saveToFile() / loadFromFile()   (File I/O)        │
-│  + operator<<  [friend]            (W7)              │
-└───────────────┬──────────────────────────────────────┘
-                │ manages (1 → 0..*)
-                ▼
-┌───────────────────────────────────────────────────────┐
-│                       Student                         │
-│  - name         : char*   ← deep copy (W3)            │
-│  - room         : Room    ← object member (W5)        │
-│  - joinDate     : Date    ← object member (W5)        │
-│  - studentCount : static  (W5)                        │
-│  + payFees() : Student&   ← cascaded calls (W4)       │
-│  + operator<<  [friend]   (W7)                        │
-└──────┬─────────────────────────────┬─────────────────┘
-       │ has-a (object member)       │ has-a (object member)
-       ▼                             ▼
-┌─────────────────┐         ┌────────────────────┐
-│      Room       │         │       Date         │
-│ - totalRooms    │         │ - day/month/year   │
-│   : static (W5) │         │ + operator<<       │
-│ + operator==    │         │   [friend] (W7)    │
-│ + operator<<    │         │ + operator==       │
-│   [friend] (W7) │         │   (member)  (W7)  │
-└─────────────────┘         └────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                    FoodDeliverySystem                          │
+│  - customers  : Customer**  (dynamic ptr array, W6)           │
+│  - orders     : Order**     (dynamic ptr array, W6)           │
+│  - menu       : MenuItem*   (dynamic array, W6)               │
+│  - systemCount : static     (W5)                              │
+│  - dataFile    : const      (W5)                              │
+│  + saveToFile() / loadFromFile()    (File I/O)                │
+│  + operator<<  [friend]             (W7)                      │
+└──────────┬───────────────────────┬─────────────────────────── ┘
+           │ manages (1 → 0..*)    │ manages (1 → 0..*)
+           ▼                       ▼
+┌─────────────────────┐   ┌─────────────────────────────────────┐
+│      Customer       │   │               Order                 │
+│  - name  : char*    │   │  - customer  : Customer (W5 obj)    │
+│    (deep copy W3)   │   │  - orderDate : Date     (W5 obj)    │
+│  - customerCount    │   │  - items     : MenuItem* (W6 heap)  │
+│    : static (W5)    │   │  - orderCount : static  (W5)        │
+│  + addSpending()    │   │  + addItem()    ← cascaded (W4)     │
+│    cascaded (W4)    │   │  + applyDiscount()                  │
+│  + operator<<       │   │    .updateStatus() chain (W4)       │
+│    [friend] (W7)    │   │  + operator<<   [friend] (W7)       │
+└─────────────────────┘   └──────────────┬──────────────────────┘
+                                         │ contains (object member)
+                          ┌──────────────┴──────────────────────┐
+                          │       Date            MenuItem       │
+                          │  - day/month/year  - itemName:char*  │
+                          │  + operator<<      - totalItems:stat │
+                          │    [friend] (W7)   + operator<<      │
+                          │  + operator==        [friend] (W7)  │
+                          │    (member) (W7)   + operator==      │
+                          └─────────────────────────────────────┘
 ```
 
-> **Full UML class diagram:** see `hostel_uml.puml`
-> **Program flowchart:** see `hostel_flowchart.mmd`
+> **Full UML class diagram:** `food_delivery_uml.puml`
+> **Program flowchart:** `food_delivery_flowchart.mmd`
 
 ---
 
@@ -90,78 +106,87 @@ Compiler  : g++ (GCC) — any C++11 or later
 
 ```mermaid
 flowchart TD
-    A([Start]) --> B["new Hostel on heap  W6"]
-    B --> C["initializeRooms + loadFromFile"]
+    A([Start]) --> B["new FoodDeliverySystem on heap  W6"]
+    B --> C["initializeMenu + loadFromFile"]
     C --> D["Display Menu"]
     D --> E[/cin >> choice/]
     E --> F{choice == 0?}
-    F -- Yes --> G["saveToFile + delete hostel  W6"]
+    F -- Yes --> G["saveToFile + delete fds  W6"]
     G --> H([End])
     F -- No --> I{switch choice}
-    I -- 1 --> J["Add Student  new W6  deep copy W3"]
-    I -- 2 --> K["Remove Student  delete W6"]
-    I -- 7 --> L["Collect Fees  cascaded call W4"]
-    I -- 9 --> M["Stats  static members W5"]
+    I -- 1 --> J["Add Customer  new W6  deep copy W3"]
+    I -- 8 --> K["Place Order  new Order W6  obj member W5"]
+    I -- 9 --> L["Add Item  cascaded call W4  arrow -> W6"]
+    I -- 11 --> M["Discount  o->applyDiscount().updateStatus()  W4"]
     J & K & L & M --> D
 ```
 
-> For the full detailed flowchart, open `hostel_flowchart.mmd` in [Mermaid Live Editor](https://mermaid.live).
+> For the full detailed flowchart, open `food_delivery_flowchart.mmd` in [Mermaid Live Editor](https://mermaid.live).
 
 ---
 
 ## ✅ Features
 
-- **Student Registration** — Add students with ID, name (dynamic `char*`), CNIC, contact, room, and join date
-- **Room Management** — Pre-loaded rooms (Single / Double / Triple) with rent; add more at runtime
-- **Fee Collection** — Pay and track fees per student with cascaded function calls
-- **Search & Display** — Search by student ID; list all students or all / available rooms
-- **Statistics** — Live counts via `static` members (`studentCount`, `totalRooms`, `hostelCount`)
-- **File Persistence** — All records auto-saved to `hostel_data.txt` and reloaded on next run
-- **Deep Memory Management** — `char* name` uses `new` / `delete[]`; full Rule-of-Three implemented
+- **Customer Management** — Register / remove / search customers with ID, name (`char*`), contact, address
+- **Menu Management** — 8 pre-loaded items; add more at runtime; filter available items
+- **Order Placement** — Create orders linked to customers with a date
+- **Item Addition** — Add multiple menu items per order; total auto-calculated
+- **Order Status Tracking** — Update status: Pending → Preparing → Out for Delivery → Delivered
+- **Discount System** — Apply percentage discounts with chained method calls (cascading, W4)
+- **Customer Spending Tracker** — Tracks total amount spent per customer across all orders
+- **Statistics Dashboard** — Live counts via `static` members
+- **File Persistence** — Auto-save to `orders_data.txt`, reload on every startup
 
 ---
 
 ## ⚙️ How to Compile & Run
 
 ### Prerequisites
+
 - GCC / G++ compiler (C++11 or later)
 - Any terminal (Linux, macOS, Windows with MinGW or WSL)
 
 ### Compile
 
 ```bash
-g++ -o hms main.cpp
+g++ -o fds main.cpp
 ```
 
 ### Run
 
 ```bash
 # Linux / macOS
-./hms
+./fds
 
 # Windows
-hms.exe
+fds.exe
 ```
 
 ### Menu Options
 
 ```
-============================================
-     HOSTEL MANAGEMENT SYSTEM
-     Green Valley Hostel
-============================================
- 1.  Add Student
- 2.  Remove Student
- 3.  Search Student
- 4.  Display All Students
- 5.  Display All Rooms
- 6.  Display Available Rooms
- 7.  Collect Fees
- 8.  Add Room
- 9.  Display Statistics
- 10. Save Data to File
+=============================================
+       FOOD DELIVERY SYSTEM
+       QuickBite Express
+=============================================
+ 1.  Add Customer
+ 2.  Remove Customer
+ 3.  Search Customer
+ 4.  Display All Customers
+ 5.  Display Full Menu
+ 6.  Display Available Menu
+ 7.  Add Menu Item
+ 8.  Place Order
+ 9.  Add Item to Order
+ 10. Update Order Status
+ 11. Apply Discount to Order
+ 12. View Order
+ 13. Display All Orders
+ 14. Orders by Customer
+ 15. Display Statistics
+ 16. Save Data to File
  0.  Exit
-============================================
+=============================================
 ```
 
 ---
@@ -169,71 +194,71 @@ hms.exe
 ## 📁 File Structure
 
 ```
-hostel-management-system/
+food-delivery-system/
 │
-├── main.cpp                  ← Full C++ source (single file)
-├── hostel_data.txt           ← Auto-generated data file (created on first save)
+├── main.cpp                      ← Full C++ source (single file)
+├── orders_data.txt               ← Auto-generated data file
 │
-├── hostel_uml.puml           ← UML Class Diagram  (PlantUML format)
-├── hostel_flowchart.mmd      ← Program Flowchart  (Mermaid format)
-└── README.md                 ← This file
+├── food_delivery_uml.puml        ← UML Class Diagram  (PlantUML)
+├── food_delivery_flowchart.mmd   ← Program Flowchart  (Mermaid)
+└── README.md                     ← This file
 ```
 
 ---
 
 ## 🖼 Diagrams
 
-### UML Class Diagram (`hostel_uml.puml`)
-
-Open with any of these tools:
+### UML Class Diagram — `food_delivery_uml.puml`
 
 | Tool | How to open |
 |------|-------------|
 | **VS Code** | Install *PlantUML* extension → open `.puml` → press `Alt + D` |
 | **IntelliJ / CLion** | Install *PlantUML Integration* plugin → open `.puml` → preview panel |
-| **Online** | Go to [plantuml.com/plantuml](https://www.plantuml.com/plantuml/uml/) → paste file contents |
-| **PlantUML JAR** | `java -jar plantuml.jar hostel_uml.puml` → exports PNG/SVG |
+| **Online (fastest)** | Go to [plantuml.com/plantuml](https://www.plantuml.com/plantuml/uml/) → paste file contents |
+| **Export PNG/SVG** | `java -jar plantuml.jar food_delivery_uml.puml` |
 
-### Flowchart (`hostel_flowchart.mmd`)
-
-Open with any of these tools:
+### Flowchart — `food_delivery_flowchart.mmd`
 
 | Tool | How to open |
 |------|-------------|
-| **Mermaid Live Editor** | Go to [mermaid.live](https://mermaid.live) → paste file contents |
-| **VS Code** | Install *Markdown Preview Mermaid Support* extension → preview renders automatically |
-| **GitHub** | Push `.mmd` file and it renders natively in Markdown |
-| **Obsidian** | Paste inside a code block tagged ` ```mermaid ` |
+| **Mermaid Live (fastest)** | Go to [mermaid.live](https://mermaid.live) → paste file contents |
+| **VS Code** | Install *Markdown Preview Mermaid Support* → wrap in ` ```mermaid ` block |
+| **GitHub** | Renders natively inside any `.md` file |
 | **draw.io** | Extras → Edit Diagram → paste Mermaid syntax |
+| **Obsidian** | Paste inside ` ```mermaid ` code block |
 
 ---
 
 ## 🧪 Sample Usage
 
+**Register a customer and place an order:**
+
 ```
 Enter your choice: 1
+--- Register Customer ---
+Customer ID  : 201
+Full Name    : Maham Shahzadi
+Contact No.  : 0300-1111111
+Address      : House 12, Street 5, Islamabad
+[+] Customer registered!
 
---- Add New Student ---
-Student ID    : 101
-Full Name     : Ali Hassan
-CNIC          : 35202-1234567-8
-Contact No.   : 0300-1234567
-Room Number   : 103
-Join Date (DD MM YYYY): 15 1 2025
+Enter your choice: 8
+--- Place Order ---
+Order ID      : 1001
+Customer ID   : 201
+Order Date (DD MM YYYY): 30 3 2025
+[+] Order placed! Now add items using option 9.
 
-[+] Student registered successfully!
-  [*] Data saved to 'hostel_data.txt'
-```
+Enter your choice: 9
+Order ID     : 1001
+Menu Item ID : 1
+[+] Zinger Burger added to Order #1001
 
-```
-Enter your choice: 7
-
-Enter Student ID  : 101
-Enter Fee Amount  : 5000
-
-[+] PKR 5000 collected from Ali Hassan
-    Total paid so far: PKR 5000
-  [*] Data saved to 'hostel_data.txt'
+Enter your choice: 11
+Order ID     : 1001
+Discount (%) : 10
+[+] 10% discount applied to Order #1001
+    New Total: PKR 315
 ```
 
 ---
@@ -241,39 +266,37 @@ Enter Fee Amount  : 5000
 ## 🔑 Key OOP Highlights
 
 ```cpp
-// W3 — Deep copy constructor (char* name)
-Student::Student(const Student& s) {
-    name = new char[strlen(s.name) + 1];
-    strcpy(name, s.name);
+// W3 — Deep copy constructor (char* name in Customer)
+Customer::Customer(const Customer& c) {
+    name = new char[strlen(c.name) + 1];
+    strcpy(name, c.name);
 }
 
-// W4 — Cascaded calls (returns *this)
-student->payFees(5000).updateContact("0321-9999999");
+// W3 — Deep copy in Order (copies MenuItem array)
+Order::Order(const Order& o) {
+    items = new MenuItem[maxItems];
+    for (int i = 0; i < itemCount; i++)
+        items[i] = o.items[i];   // uses MenuItem::operator=
+}
 
-// W5 — Static member + this pointer
-Student& Student::payFees(float amount) {
-    totalFeesPaid += amount;
-    return *this;               // implicit this pointer
+// W4 — Cascaded calls (each method returns *this)
+order->addItem(item).updateStatus("Preparing");
+customer->addSpending(350).updateAddress("New Address");
+
+// W5 — Static members + this pointer
+Order& Order::addItem(const MenuItem& item) {
+    items[itemCount++] = item;
+    totalAmount += item.getPrice();
+    return *this;              // W5: this pointer enables cascading
 }
 
 // W6 — Arrow operator + new / delete
-students[i] = new Student(id, name, cnic, contact, *r, date);
-students[i]->display();         // -> operator
-delete students[i];             // destructor auto-frees char* name
+orders[i] = new Order(id, *customer, date);
+orders[i]->display();         // -> operator
+delete orders[i];             // destructor chain: ~Order → delete[] items
+                              //                  ~MenuItem → delete[] itemName
 
 // W7 — Friend operator overloading
-friend ostream& operator<<(ostream& out, const Student& s);
+friend ostream& operator<<(ostream& out, const Order& o);
+friend ostream& operator<<(ostream& out, const Customer& c);
 ```
-
----
-
-## 👨‍💻 Author
-
-| Field | Details |
-|-------|---------|
-| **Name** | Maham Shahzadi |
-| **Roll Number** | 2025-CS-693 |
-| **Project** | Hostel Management System |
-| **Language** | C++ |
-| **Paradigm** | Object-Oriented Programming |
-| **Curriculum** | Weeks 1–7 OOP Concepts |
